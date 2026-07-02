@@ -6,13 +6,10 @@ export default defineConfig({
 	plugins: [
 		sveltekit({
 			compilerOptions: {
-				// Force runes mode for the project, except for libraries. Can be removed in svelte 6.
 				runes: ({ filename }) =>
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
 
-			// Deploying to Cloudflare Workers with static assets.
-			// See https://svelte.dev/docs/kit/adapter-cloudflare and wrangler.jsonc.
 			adapter: adapter()
 		})
 	]

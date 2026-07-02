@@ -1,10 +1,37 @@
-:root {
-    --bg: #F2F3F4;
-    --text: #121212;
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
 }
+
+:root {
+	--bg: linear-gradient(225deg, #f3f0ea 0%, #ece7de 55%, #e6e0d4 100%);
+	--text: #2e2c28;
+	--glow: rgba(120, 130, 160, 0.06);
+	--btn-bg: rgba(255, 255, 255, 0.5);
+	--btn-bg-hover: rgba(255, 255, 255, 0.68);
+	--btn-border: rgba(46, 44, 40, 0.12);
+	--btn-highlight: rgba(255, 255, 255, 0.85);
+	--btn-shadow: rgba(46, 44, 40, 0.5);
+	--btn-icon-bg: rgba(46, 44, 40, 0.08);
+	--btn-ring: rgba(70, 110, 190, 0.55);
+	--well-bg: rgba(46, 44, 40, 0.05);
+	--well-shadow: rgba(46, 44, 40, 0.14);
+}
+
 :root[data-theme="dark"] {
-    --bg: #121212;
+    --bg: linear-gradient(225deg, #29323e 0%, #141d28 55%, #0d141c 100%);
     --text: #F2F3F4;
+    --glow: rgba(130,170,255,0.07);
+    --btn-bg: rgba(255, 255, 255, 0.06);
+    --btn-bg-hover: rgba(255, 255, 255, 0.1);
+    --btn-border: rgba(255, 255, 255, 0.12);
+    --btn-highlight: rgba(255, 255, 255, 0.16);
+    --btn-shadow: rgba(0, 0, 0, 0.7);
+    --btn-icon-bg: rgba(255, 255, 255, 0.1);
+    --btn-ring: rgba(150, 180, 255, 0.55);
+    --well-bg: rgba(0, 0, 0, 0.22);
+    --well-shadow: rgba(0, 0, 0, 0.45);
 }
 body {
     background: var(--bg);
