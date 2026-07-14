@@ -166,7 +166,7 @@
 	<span class="socials-label">find me</span>
 	<nav class="social-links">
 		<a href="https://github.com/hypigel" target="_blank" rel="noopener">github</a>
-		<a href="https://chess.com/chesschampv1" target="_blank" rel="noopener">chess.com</a>
+		<a href="https://www.chess.com/member/chesschampv1" target="_blank" rel="noopener">chess.com</a>
 		<button class="social-copy" onclick={copyDisc}>
 				{copied ? 'copied!' : 'discord'}
 		</button>	
