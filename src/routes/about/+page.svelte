@@ -1,9 +1,11 @@
 <script lang="ts">
+
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import PushButton from '$lib/PushButton.svelte';
 	import { supabase } from '$lib/supabase';
-
+    import { fade } from 'svelte/transition';
+	import whoisthis from '$lib/assets/whoisthis.png';
 	let theme = $state(browser ? localStorage.getItem('theme') ?? 'light' : 'light');
 	$effect(() => {
 		document.documentElement.setAttribute('data-theme', theme);
@@ -19,6 +21,8 @@
 	let submitting = $state(false);
 	let used = $state(browser ? Number(localStorage.getItem('feedbackCount') ?? 0) : 0);
 	let atLimit = $derived(used >= FEEDBACK_LIMIT);
+	let cycleIndex = $state(0);
+	let current = $derived(words.length ? words[cycleIndex % words.length] : '');
 
 	async function loadWords() {
 		const { data } = await supabase
@@ -42,6 +46,22 @@
 			await loadWords();
 		}
 	}
+	let copied = $state(false);
+
+	async function copyDisc() {
+		await navigator.clipboard.writeText('hypigel');
+		copied = true;
+		setTimeout(() => (copied = false), 1500);
+	}
+
+
+	$effect(() => {
+		if (words.length < 2) return;
+		const id = setInterval(() => {
+			cycleIndex = (cycleIndex + 1) % words.length;
+		}, 2200);
+		return () => clearInterval(id);
+	})
 
 	$effect(() => {
 		loadWords();
@@ -98,11 +118,15 @@
 
 	<section class="grid">
 		<article class="card wide">
+			<h2>who is this <img src={whoisthis} alt="who is this" class="emoji"></h2>
+			<p>	
+				i'm a 15 yr old student from massachusetts. i like to build web apps and i compete in robotics(ftc). i also love playing chess on the side.
+			</p>
 			<h2>what this is</h2>
 			<p>
 				a personal site i'm using to learn <a href="https://svelte.dev">svelte</a>.
 				the gradient, the light that follows your cursor, the glass buttons, they all
-				are little pieces i built along the way.
+				are little pieces i built along the way. skills/projects coming "soon"!
 			</p>
 		</article>
 
@@ -121,21 +145,86 @@
 			<form class="field" onsubmit={(e) => { e.preventDefault(); submitWord(); }}>
 				<span>one word for this site</span>
 				<input bind:value={word} placeholder="cool" maxlength="40" disabled={atLimit} />
+				{#if word.trim() && !atLimit}
+					<small class="warning">please be mindful of what you type...</small>
+				{/if}
 			</form>
 			{#if atLimit}
 				<p class="limit-note">that's your two - thanks for the feedback!</p>
 			{/if}
 			{#if words.length}
-				<div class="words">
-					<span class="words-label">others said</span>
-					<p class="word-list">{words.join(' · ')}</p>
+				<div class="ticker">
+					<span class="words-label">what people are saying</span>
+					{#key current}
+						<p class="headline" in:fade={{ duration: 400 }}>{current}</p>
+					{/key}
 				</div>
 			{/if}
 		</article>
 	</section>
+	<footer class="socials">
+	<span class="socials-label">find me</span>
+	<nav class="social-links">
+		<a href="https://github.com/hypigel" target="_blank" rel="noopener">github</a>
+		<a href="https://chess.com/chesschampv1" target="_blank" rel="noopener">chess.com</a>
+		<button class="social-copy" onclick={copyDisc}>
+				{copied ? 'copied!' : 'discord'}
+		</button>	
+	</nav>
+	</footer>
+
 </main>
 
 <style>
+	.social-copy {
+		font: inherit;
+		color: inherit;
+		background: none;
+		border: none;
+		padding: 0;
+		cursor: pointer;
+		opacity: 0.75;
+		transition: opacity 200ms ease;
+	}
+	.social-copy:hover {
+		opacity: 1;
+	}
+
+	.socials {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.6rem;
+	opacity: 0.7;
+	}
+	.socials-label {
+		font-size: 0.7rem;
+		text-transform: uppercase;
+		letter-spacing: 0.15em;
+		text-indent: 0.15em;
+		opacity: 0.6;
+	}
+	.social-links {
+		display: flex;
+		gap: 1.5rem;
+		font-size: 0.9rem;
+	}
+	.social-links a {
+		opacity: 0.75;
+		text-decoration: none;
+		transition: opacity 200ms ease;
+	}
+	.social-links a:hover {
+		opacity: 1;
+	}
+
+	.emoji {
+		width: 1em;
+		height: 1em;
+		object-fit: contain;
+		vertical-align: -0.15em;
+		display: inline-block;
+	}
 	.glow {
 		position: fixed;
 		inset: -50%;
@@ -297,11 +386,11 @@
 		font-size: 0.85rem;
 		opacity: 0.7;
 	}
-	.words {
+	.ticker {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 0.4rem;
+		gap: 0.6rem;
 		width: 100%;
 	}
 	.words-label {
@@ -311,11 +400,16 @@
 		text-indent: 0.15em;
 		opacity: 0.6;
 	}
-	.word-list {
+	.headline {
 		margin: 0;
-		line-height: 1.7;
-		opacity: 0.85;
-		word-break: break-word;
+		font-size: clamp(1.75rem, 6vw, 2.5rem);
+		font-weight: 700;
+		line-height: 1.1;
+	}
+	.warning {
+		font-size: 0.72rem;
+		opacity: 0.55;
+		letter-spacing: 0.01em;
 	}
 
 	a {
@@ -331,5 +425,8 @@
 
 	@media (max-width: 640px) {
 		.grid { grid-template-columns: 1fr; }
+	}
+	@media (max-width: 480px) {
+		.page { padding: 2.5rem 1rem 4rem; }
 	}
 </style>

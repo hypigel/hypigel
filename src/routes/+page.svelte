@@ -40,12 +40,21 @@
     });
 </script>
 <div class="glow" bind:this={glow}></div>
+<div class="corner">
+    <PushButton onclick={toggle}>{theme === 'light' ? 'dark' : 'light'} mode</PushButton>
+</div>
 <div class="landing">
     <h1>hi, i'm hypigel</h1>
     <PushButton onclick={() => goto('/about')}>about me</PushButton>
-    <PushButton onclick={toggle}>{theme === 'light' ? 'dark' : 'light'} mode</PushButton>
 </div>
 <style>
+
+    .corner {
+        position: fixed;
+        top: 1.25rem;
+        right: 1.25rem;
+        z-index: 1;
+    }
     .glow {
         position: fixed;
         inset: -50%;
@@ -60,12 +69,20 @@
         justify-content:center;
         align-items:center;
         gap: 1rem;
+        padding: 0 1.5rem;
     }
     h1 {
-        font-size: 4rem;
+        font-size: clamp(2rem, 12vw, 4rem);
+        text-align: center;
     }
     :global(body.landing) {
         margin: 0;
         overflow: hidden;
+    }
+    @media (max-width: 480px) {
+        .corner {
+            top: 0.75rem;
+            right: 0.75rem;
+        }
     }
 </style>
